@@ -20,6 +20,7 @@ import com.app.security.JWTFilter;
 import com.app.services.UserDetailsServiceImpl;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -45,11 +46,13 @@ public class SecurityConfig {
 			.authenticated()
 			.and()
 			.exceptionHandling().authenticationEntryPoint(
-					(request, response, authException) -> 
+					(request, response, authException) ->
 						response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
 			.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);	
 		
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+		http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
 		
 		http.authenticationProvider(daoAuthenticationProvider());
 		
