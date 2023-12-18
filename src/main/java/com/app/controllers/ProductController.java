@@ -35,13 +35,11 @@ public class ProductController {
 
 	@PostMapping("/admin/categories/{categoryId}/product")
 	public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody Product product, @PathVariable Long categoryId) {
-
 		ProductDTO savedProduct = productService.addProduct(categoryId, product);
-
 		return new ResponseEntity<ProductDTO>(savedProduct, HttpStatus.CREATED);
 	}
 
-	@GetMapping("/public/products")
+	@GetMapping("/products")
 	public ResponseEntity<ProductResponse> getAllProducts(
 			@RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,

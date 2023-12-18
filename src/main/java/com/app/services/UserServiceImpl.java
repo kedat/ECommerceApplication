@@ -27,6 +27,7 @@ import com.app.payloads.ProductDTO;
 import com.app.payloads.UserDTO;
 import com.app.payloads.UserResponse;
 import com.app.repositories.AddressRepo;
+import com.app.repositories.CartRepo;
 import com.app.repositories.RoleRepo;
 import com.app.repositories.UserRepo;
 
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService {
 			User user = modelMapper.map(userDTO, User.class);
 
 			Cart cart = new Cart();
+			cart.setUser(user);
 			user.setCart(cart);
 
 			Role role = roleRepo.findById(AppConstants.USER_ID).get();
@@ -85,7 +87,6 @@ public class UserServiceImpl implements UserService {
 			user.setAddresses(List.of(address));
 
 			User registeredUser = userRepo.save(user);
-
 			cart.setUser(registeredUser);
 
 			userDTO = modelMapper.map(registeredUser, UserDTO.class);
@@ -164,6 +165,25 @@ public class UserServiceImpl implements UserService {
 
 		userDTO.getCart().setProducts(products);
 
+		return userDTO;
+	}
+
+	@Override
+	public UserDTO getUserByEmail(String email) {
+		User user = userRepo.findByUserEmail(email);
+
+		UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+
+		userDTO.setAddress(modelMapper.map(user.getAddresses().stream().findFirst().get(), AddressDTO.class));
+
+		CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
+
+		List<ProductDTO> products = user.getCart().getCartItems().stream()
+				.map(item -> modelMapper.map(item.getProduct(), ProductDTO.class)).collect(Collectors.toList());
+
+		userDTO.setCart(cart);
+
+		userDTO.getCart().setProducts(products);
 		return userDTO;
 	}
 

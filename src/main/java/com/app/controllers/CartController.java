@@ -42,7 +42,7 @@ public class CartController {
 	}
 	
 	@GetMapping("/public/users/{emailId}/carts/{cartId}")
-	public ResponseEntity<CartDTO> getCartById(@PathVariable String emailId, @PathVariable Long cartId) {
+	public ResponseEntity<CartDTO> getCartById(@PathVariable String emailId, @PathVariable Integer cartId) {
 		CartDTO cartDTO = cartService.getCart(emailId, cartId);
 		
 		return new ResponseEntity<CartDTO>(cartDTO, HttpStatus.FOUND);

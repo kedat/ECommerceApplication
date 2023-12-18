@@ -1,8 +1,5 @@
 package com.app.controllers;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.exceptions.UserNotFoundException;
 import com.app.payloads.LoginCredentials;
 import com.app.payloads.UserDTO;
+import com.app.payloads.UserInfoDTO;
 import com.app.security.JWTUtil;
 import com.app.services.UserService;
 
@@ -43,7 +41,7 @@ public class AuthController {
 	private PasswordEncoder passwordEncoder;
 
 	@PostMapping("/register")
-	public ResponseEntity<Map<String, Object>> registerHandler(@Valid @RequestBody UserDTO user) throws UserNotFoundException {
+	public ResponseEntity<UserInfoDTO> registerHandler(@Valid @RequestBody UserDTO user) throws UserNotFoundException {
 		String encodedPass = passwordEncoder.encode(user.getPassword());
 
 		user.setPassword(encodedPass);
@@ -52,20 +50,22 @@ public class AuthController {
 
 		String token = jwtUtil.generateToken(userDTO.getEmail());
 
-		return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("token", token),
-				HttpStatus.CREATED);
-	}
+		UserInfoDTO userInfo = new UserInfoDTO(token, userDTO);
+
+		return new ResponseEntity<UserInfoDTO>(userInfo, HttpStatus.OK);
+	}	
 
 	@PostMapping("/login")
-	public Map<String, Object> loginHandler(@Valid @RequestBody LoginCredentials credentials) {
+	public ResponseEntity<UserInfoDTO> loginHandler(@Valid @RequestBody LoginCredentials credentials) {
 
 		UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
 				credentials.getEmail(), credentials.getPassword());
 
 		authenticationManager.authenticate(authCredentials);
-
+		UserDTO userDetails = userService.getUserByEmail(credentials.getEmail());
 		String token = jwtUtil.generateToken(credentials.getEmail());
 
-		return Collections.singletonMap("token", token);
+		UserInfoDTO userInfo = new UserInfoDTO(token, userDetails);
+		return new ResponseEntity<UserInfoDTO>(userInfo, HttpStatus.OK);
 	}
 }

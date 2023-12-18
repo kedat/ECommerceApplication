@@ -1,5 +1,6 @@
 package com.app.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,8 +110,8 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public CartDTO getCart(String emailId, Long cartId) {
-		Cart cart = cartRepo.findCartByEmailAndCartId(emailId, cartId);
+	public CartDTO getCart(String emailId, Integer cartId) {
+		Cart cart = cartItemRepo.findCartByEmailAndCartId(emailId, cartId);
 
 		if (cart == null) {
 			throw new ResourceNotFoundException("Cart", "cartId", cartId);
@@ -121,8 +122,11 @@ public class CartServiceImpl implements CartService {
 		List<ProductDTO> products = cart.getCartItems().stream()
 				.map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
 
+        for (ProductDTO item : products) {
+							CartItem cartItem = cartItemRepo.findCartItemByProductIdAndCartId((long) cartId, item.getProductId());
+              item.setQuantity(cartItem.getQuantity());
+        }
 		cartDTO.setProducts(products);
-
 		return cartDTO;
 	}
 

@@ -18,8 +18,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,16 +33,9 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
-	@Size(min = 5, max = 20, message = "First Name must be between 5 and 30 characters long")
-	@Pattern(regexp = "^[a-zA-Z]*$", message = "First Name must not contain numbers or special characters")
 	private String firstName;
 
-	@Size(min = 5, max = 20, message = "Last Name must be between 5 and 30 characters long")
-	@Pattern(regexp = "^[a-zA-Z]*$", message = "Last Name must not contain numbers or special characters")
 	private String lastName;
-
-	@Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
-	@Pattern(regexp = "^\\d{10}$", message = "Mobile Number must contain only Numbers")
 	private String mobileNumber;
 
 	@Email
@@ -64,4 +55,7 @@ public class User {
 	@OneToOne(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
 	private Cart cart;
 
+  public User orElseThrow(Object object) {
+    return null;
+  }
 }
