@@ -200,7 +200,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public String deleteProductFromCart(Long cartId, Long productId) {
+	public CartDTO deleteProductFromCart(Long cartId, Long productId) {
 		Cart cart = cartRepo.findById(cartId)
 				.orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
@@ -217,7 +217,14 @@ public class CartServiceImpl implements CartService {
 
 		cartItemRepo.deleteCartItemByProductIdAndCartId(cartId, productId);
 
-		return "Product " + cartItem.getProduct().getProductName() + " removed from the cart !!!";
+				CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+
+		List<ProductDTO> productDTOs = cart.getCartItems().stream()
+				.map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
+
+		cartDTO.setProducts(productDTOs);
+
+		return cartDTO;
 	}
 
 }
