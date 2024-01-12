@@ -61,7 +61,7 @@ public class OrderController {
 		return new ResponseEntity<OrderDTO>(order, HttpStatus.FOUND);
 	}
 	
-	@PutMapping("admin/users/{emailId}/orders/{orderId}/orderStatus/{orderStatus}")
+	@PutMapping("public/users/{emailId}/orders/{orderId}/orderStatus/{orderStatus}")
 	public ResponseEntity<OrderDTO> updateOrderByUser(@PathVariable String emailId, @PathVariable Long orderId, @PathVariable String orderStatus) {
 		OrderDTO order = orderService.updateOrder(emailId, orderId, orderStatus);
 		

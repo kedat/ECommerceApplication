@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
 		order.setOrderDate(LocalDate.now());
 
 		order.setTotalAmount(cart.getTotalPrice());
-		order.setOrderStatus("Order Accepted !");
+		order.setOrderStatus("Processing order !");
 
 		Payment payment = new Payment();
 		payment.setOrder(order);
@@ -124,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
 		});
 
 		OrderDTO orderDTO = modelMapper.map(savedOrder, OrderDTO.class);
-		
+
 		orderItems.forEach(item -> orderDTO.getOrderItems().add(modelMapper.map(item, OrderItemDTO.class)));
 
 		return orderDTO;
@@ -170,20 +170,20 @@ public class OrderServiceImpl implements OrderService {
 
 		List<OrderDTO> orderDTOs = orders.stream().map(order -> modelMapper.map(order, OrderDTO.class))
 				.collect(Collectors.toList());
-		
+
 		if (orderDTOs.size() == 0) {
 			throw new APIException("No orders placed yet by the users");
 		}
 
 		OrderResponse orderResponse = new OrderResponse();
-		
+
 		orderResponse.setContent(orderDTOs);
 		orderResponse.setPageNumber(pageOrders.getNumber());
 		orderResponse.setPageSize(pageOrders.getSize());
 		orderResponse.setTotalElements(pageOrders.getTotalElements());
 		orderResponse.setTotalPages(pageOrders.getTotalPages());
 		orderResponse.setLastPage(pageOrders.isLast());
-		
+
 		return orderResponse;
 	}
 
@@ -196,7 +196,12 @@ public class OrderServiceImpl implements OrderService {
 			throw new ResourceNotFoundException("Order", "orderId", orderId);
 		}
 
-		order.setOrderStatus(orderStatus);
+		if (orderStatus.equals("cancel")) {
+			order.setOrderStatus("Order Cancelled !");
+		}
+		if (orderStatus.equals("done")) {
+			order.setOrderStatus("Done deal !");
+		}
 
 		return modelMapper.map(order, OrderDTO.class);
 	}
