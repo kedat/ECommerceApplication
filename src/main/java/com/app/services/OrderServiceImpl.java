@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
 		order.setOrderDate(LocalDate.now());
 
 		order.setTotalAmount(cart.getTotalPrice());
-		order.setOrderStatus("Processing order !");
+		order.setOrderStatus("Pending accepted !");
 
 		Payment payment = new Payment();
 		payment.setOrder(order);
@@ -190,7 +190,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderDTO updateOrder(String emailId, Long orderId, String orderStatus) {
 
-		Order order = orderRepo.findOrderByEmailAndOrderId(emailId, orderId);
+		Order order = orderRepo.findOrderByOrderId(orderId);
 
 		if (order == null) {
 			throw new ResourceNotFoundException("Order", "orderId", orderId);
@@ -198,6 +198,13 @@ public class OrderServiceImpl implements OrderService {
 
 		if (orderStatus.equals("cancel")) {
 			order.setOrderStatus("Order Cancelled !");
+		}
+		if (orderStatus.equals("accept")) {
+			order.setOrderStatus("Order Accepted !");
+		}
+
+		if (orderStatus.equals("process")) {
+			order.setOrderStatus("Order processing !");
 		}
 		if (orderStatus.equals("done")) {
 			order.setOrderStatus("Done deal !");

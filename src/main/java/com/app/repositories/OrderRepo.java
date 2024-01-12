@@ -14,6 +14,9 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
 	@Query("SELECT o FROM Order o WHERE o.email = ?1 AND o.id = ?2")
 	Order findOrderByEmailAndOrderId(String email, Long cartId);
 
+	@Query("SELECT o FROM Order o WHERE o.id = ?1")
+	Order findOrderByOrderId(Long cartId);
+
 	List<Order> findAllByEmail(String emailId);
 	
 }
