@@ -60,6 +60,13 @@ public class OrderController {
 		
 		return new ResponseEntity<OrderDTO>(order, HttpStatus.FOUND);
 	}
+
+	@GetMapping("admin/orders/{orderId}")
+	public ResponseEntity<OrderDTO> getOrderByAdmin(@PathVariable Long orderId) {
+		OrderDTO order = orderService.getOrderByAdmin(orderId);
+
+		return new ResponseEntity<OrderDTO>(order, HttpStatus.FOUND);
+	}
 	
 	@PutMapping("public/users/{emailId}/orders/{orderId}/orderStatus/{orderStatus}")
 	public ResponseEntity<OrderDTO> updateOrderByUser(@PathVariable String emailId, @PathVariable Long orderId, @PathVariable String orderStatus) {

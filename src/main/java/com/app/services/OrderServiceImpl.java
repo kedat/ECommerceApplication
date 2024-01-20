@@ -157,6 +157,18 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	public OrderDTO getOrderByAdmin(Long orderId) {
+
+		Order order = orderRepo.findOrderByOrderId(orderId);
+
+		if (order == null) {
+			throw new ResourceNotFoundException("Order", "orderId", orderId);
+		}
+
+		return modelMapper.map(order, OrderDTO.class);
+	}
+
+	@Override
 	public OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
 		Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
